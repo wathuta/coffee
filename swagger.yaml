@@ -1,0 +1,157 @@
+basePath: /
+consumes:
+- application/json
+definitions:
+  GenericError:
+    description: GenericError is a generic error message returned by a server
+    properties:
+      message:
+        type: string
+        x-go-name: Message
+    type: object
+    x-go-package: github.com/wathuta/rest-go/handlers
+  Product:
+    description: Product is a data model of a product
+    properties:
+      description:
+        type: string
+        x-go-name: Description
+      id:
+        description: the id of the product
+        format: int64
+        minimum: 1
+        type: integer
+        x-go-name: ID
+      name:
+        description: name of the  product
+        type: string
+        x-go-name: Name
+      price:
+        format: int64
+        type: integer
+        x-go-name: Price
+      sku:
+        type: string
+        x-go-name: SKU
+    required:
+    - id
+    - name
+    type: object
+    x-go-package: github.com/wathuta/rest-go/model
+host: localhost:8080
+info:
+  description: |-
+    Documentation for Product API
+
+    Scheme:http
+  title: of Product-API
+  version: 1.0.0
+paths:
+  /create:
+    post:
+      description: Creates a product in the database
+      operationId: createProduct
+      parameters:
+      - description: Product data structure to create or a update a product
+        in: body
+        name: Body
+        required: true
+        schema:
+          $ref: '#/definitions/Product'
+      responses:
+        "201":
+          $ref: '#/responses/created'
+        "501":
+          $ref: '#/responses/internalServerError'
+      tags:
+      - product
+  /delete/{id}:
+    delete:
+      description: Deletes a product from the database
+      operationId: deleteProduct
+      parameters:
+      - description: the id of the product
+        format: int64
+        in: path
+        name: id
+        required: true
+        type: integer
+        x-go-name: ID
+      responses:
+        "201":
+          $ref: '#/responses/noContent'
+      tags:
+      - products
+  /get:
+    get:
+      description: Returns a list of products
+      operationId: listproducts
+      responses:
+        "200":
+          $ref: '#/responses/getResponse'
+      tags:
+      - products
+  /get/{id}:
+    get:
+      description: Returns a single product
+      operationId: listSingleProduct
+      parameters:
+      - description: the id of the product
+        format: int64
+        in: path
+        name: id
+        required: true
+        type: integer
+        x-go-name: ID
+      responses:
+        "200":
+          $ref: '#/responses/created'
+      tags:
+      - product
+  /update/{id}:
+    put:
+      description: makes changes to a product in the database.The product is identified by the id
+      operationId: updateProduct
+      parameters:
+      - description: Product data structure to create or a update a product
+        in: body
+        name: Body
+        required: true
+        schema:
+          $ref: '#/definitions/Product'
+      - description: the id of the product
+        format: int64
+        in: path
+        name: id
+        required: true
+        type: integer
+        x-go-name: ID
+      responses:
+        "200":
+          $ref: '#/responses/created'
+        "201":
+          $ref: '#/responses/noContent'
+        "501":
+          $ref: '#/responses/internalServerError'
+      tags:
+      - product
+produces:
+- application/json
+responses:
+  created:
+    description: Response for  creation of an object
+    schema:
+      $ref: '#/definitions/Product'
+  getResponse:
+    description: A list of all the products in the database product for the Get method
+    schema:
+      items:
+        $ref: '#/definitions/Product'
+      type: array
+  internalServerError:
+    description: error response for invalid data format or internal server Error
+    schema:
+      $ref: '#/definitions/GenericError'
+  noContent:
+    description: Response for a delete function
+swagger: "2.0"
